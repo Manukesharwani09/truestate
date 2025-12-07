@@ -47,18 +47,18 @@ export function Dashboard() {
               <div className="flex gap-4 mb-6">
                 <StatsCard
                   title="Total units sold"
-                  value={stats.totalUnitsSold}
-                  subtitle={`${stats.totalSalesRecords} SRs`}
+                  value={stats.totalUnitsSold.toLocaleString('en-IN')}
+                  subtitle={`${stats.totalSalesRecords.toLocaleString('en-IN')} SRs`}
                 />
                 <StatsCard
                   title="Total Amount"
                   value={`₹${(stats.totalAmount || 0).toLocaleString('en-IN')}`}
-                  subtitle={`${stats.totalSalesRecords} SRs`}
+                  subtitle={`${stats.totalSalesRecords.toLocaleString('en-IN')} SRs`}
                 />
                 <StatsCard
                   title="Total Discount"
                   value={`₹${(stats.totalDiscount || 0).toLocaleString('en-IN')}`}
-                  subtitle={`${stats.totalSalesRecords} SRs`}
+                  subtitle={`${stats.totalSalesRecords.toLocaleString('en-IN')} SRs`}
                 />
               </div>
             )}
