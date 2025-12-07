@@ -48,17 +48,14 @@ export function Dashboard() {
                 <StatsCard
                   title="Total units sold"
                   value={stats.totalUnitsSold.toLocaleString('en-IN')}
-                  subtitle={`${stats.totalSalesRecords.toLocaleString('en-IN')} SRs`}
                 />
                 <StatsCard
                   title="Total Amount"
                   value={`₹${(stats.totalAmount || 0).toLocaleString('en-IN')}`}
-                  subtitle={`${stats.totalSalesRecords.toLocaleString('en-IN')} SRs`}
                 />
                 <StatsCard
                   title="Total Discount"
                   value={`₹${(stats.totalDiscount || 0).toLocaleString('en-IN')}`}
-                  subtitle={`${stats.totalSalesRecords.toLocaleString('en-IN')} SRs`}
                 />
               </div>
             )}
