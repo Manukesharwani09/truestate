@@ -31,7 +31,7 @@ export function FilterPanel() {
 
   const hasActiveFilters =
     (filters.customerRegion?.length ?? 0) > 0 ||
-    (filters.gender?.length ?? 0) > 0 ||
+    !!filters.gender ||
     (filters.productCategory?.length ?? 0) > 0 ||
     (filters.tags?.length ?? 0) > 0 ||
     (filters.paymentMethod?.length ?? 0) > 0 ||
@@ -72,10 +72,10 @@ export function FilterPanel() {
 
         {/* Gender */}
         <FilterSection title="Gender">
-          <CheckboxGroup
+          <RadioGroup
             options={options.genders}
-            selected={filters.gender || []}
-            onChange={(value) => toggleArrayFilter('gender', value)}
+            selected={filters.gender || ''}
+            onChange={(value) => setFilter('gender', value)}
           />
         </FilterSection>
 
@@ -155,12 +155,33 @@ export function FilterPanel() {
                 type="date"
                 value={filters.dateRange?.from || ''}
                 max={new Date().toISOString().split('T')[0]}
-                onChange={(e) =>
-                  setFilter('dateRange', {
-                    ...filters.dateRange,
-                    from: e.target.value,
-                  })
-                }
+                onChange={(e) => {
+                  const selectedDate = e.target.value;
+                  const today = new Date().toISOString().split('T')[0];
+                  // Prevent future dates
+                  if (selectedDate && selectedDate > today) {
+                    setFilter('dateRange', {
+                      ...filters.dateRange,
+                      from: today,
+                    });
+                  } else {
+                    setFilter('dateRange', {
+                      ...filters.dateRange,
+                      from: selectedDate,
+                    });
+                  }
+                }}
+                onBlur={(e) => {
+                  const selectedDate = e.target.value;
+                  const today = new Date().toISOString().split('T')[0];
+                  // Validate on blur
+                  if (selectedDate && selectedDate > today) {
+                    setFilter('dateRange', {
+                      ...filters.dateRange,
+                      from: today,
+                    });
+                  }
+                }}
                 className="w-full px-3 py-2 border border-primary-300 rounded-lg text-sm
                          focus:outline-none focus:ring-2 focus:ring-accent-500"
               />
@@ -172,12 +193,49 @@ export function FilterPanel() {
                 value={filters.dateRange?.to || ''}
                 min={filters.dateRange?.from || undefined}
                 max={new Date().toISOString().split('T')[0]}
-                onChange={(e) =>
-                  setFilter('dateRange', {
-                    ...filters.dateRange,
-                    to: e.target.value,
-                  })
-                }
+                onChange={(e) => {
+                  const selectedDate = e.target.value;
+                  const today = new Date().toISOString().split('T')[0];
+                  const fromDate = filters.dateRange?.from;
+
+                  // Prevent future dates
+                  if (selectedDate && selectedDate > today) {
+                    setFilter('dateRange', {
+                      ...filters.dateRange,
+                      to: today,
+                    });
+                  }
+                  // Prevent "to" being before "from"
+                  else if (fromDate && selectedDate && selectedDate < fromDate) {
+                    setFilter('dateRange', {
+                      ...filters.dateRange,
+                      to: fromDate,
+                    });
+                  } else {
+                    setFilter('dateRange', {
+                      ...filters.dateRange,
+                      to: selectedDate,
+                    });
+                  }
+                }}
+                onBlur={(e) => {
+                  const selectedDate = e.target.value;
+                  const today = new Date().toISOString().split('T')[0];
+                  const fromDate = filters.dateRange?.from;
+
+                  // Validate on blur
+                  if (selectedDate && selectedDate > today) {
+                    setFilter('dateRange', {
+                      ...filters.dateRange,
+                      to: today,
+                    });
+                  } else if (fromDate && selectedDate && selectedDate < fromDate) {
+                    setFilter('dateRange', {
+                      ...filters.dateRange,
+                      to: fromDate,
+                    });
+                  }
+                }}
                 className="w-full px-3 py-2 border border-primary-300 rounded-lg text-sm
                          focus:outline-none focus:ring-2 focus:ring-accent-500"
               />
@@ -223,6 +281,34 @@ function CheckboxGroup({ options, selected, onChange }: CheckboxGroupProps) {
             checked={selected.includes(option)}
             onChange={() => onChange(option)}
             className="w-4 h-4 text-accent-600 border-primary-300 rounded
+                     focus:ring-2 focus:ring-accent-500 focus:ring-offset-0
+                     cursor-pointer transition-colors"
+          />
+          <span className="text-sm text-primary-700 group-hover:text-primary-900 transition-colors">
+            {option}
+          </span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+interface RadioGroupProps {
+  options: string[];
+  selected: string;
+  onChange: (value: string) => void;
+}
+
+function RadioGroup({ options, selected, onChange }: RadioGroupProps) {
+  return (
+    <div className="space-y-2 max-h-40 overflow-y-auto">
+      {options.map((option) => (
+        <label key={option} className="flex items-center gap-2 cursor-pointer group">
+          <input
+            type="radio"
+            checked={selected === option}
+            onChange={() => onChange(option)}
+            className="w-4 h-4 text-accent-600 border-primary-300
                      focus:ring-2 focus:ring-accent-500 focus:ring-offset-0
                      cursor-pointer transition-colors"
           />

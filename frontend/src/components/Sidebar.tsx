@@ -26,7 +26,7 @@ export function Sidebar() {
           </div>
           <div>
             <h2 className="font-semibold text-white">Vault</h2>
-            <p className="text-xs text-primary-300">Anurag Yadav</p>
+            <p className="text-xs text-primary-300">Manu Kesharwani</p>
           </div>
         </div>
       </div>

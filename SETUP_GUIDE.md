@@ -28,7 +28,7 @@ docker exec -it salescope-backend npm run prisma:seed
 ```
 
 ### 3. Access Application
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:5173
 - **Backend**: http://localhost:5000
 
 ---

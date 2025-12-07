@@ -22,7 +22,7 @@ interface FilterState {
 
 const initialFilters: Partial<Filters> = {
   customerRegion: [],
-  gender: [],
+  gender: '',
   ageRange: undefined,
   productCategory: [],
   tags: [],

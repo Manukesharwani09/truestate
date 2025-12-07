@@ -13,7 +13,7 @@ export function FilterBar() {
 
   const hasActiveFilters =
     (filters.customerRegion?.length ?? 0) > 0 ||
-    (filters.gender?.length ?? 0) > 0 ||
+    !!filters.gender ||
     (filters.productCategory?.length ?? 0) > 0 ||
     (filters.tags?.length ?? 0) > 0 ||
     (filters.paymentMethod?.length ?? 0) > 0 ||
@@ -63,8 +63,9 @@ export function FilterBar() {
           <FilterDropdown
             label="Gender"
             options={options.genders}
-            selected={filters.gender || []}
-            onToggle={(value) => toggleArrayFilter('gender', value)}
+            selected={filters.gender ? [filters.gender] : []}
+            onToggle={(value) => setFilter('gender', filters.gender === value ? '' : value)}
+            isSingleSelect
           />
 
           <FilterDropdown
@@ -129,14 +130,13 @@ export function FilterBar() {
                 onRemove={() => removeFilter('tags', tag)}
               />
             ))}
-            {filters.gender?.map((gender) => (
+            {filters.gender && (
               <FilterBadge
-                key={gender}
-                label={gender}
+                label={filters.gender}
                 color="blue"
-                onRemove={() => removeFilter('gender', gender)}
+                onRemove={() => setFilter('gender', '')}
               />
-            ))}
+            )}
             {filters.productCategory?.map((category) => (
               <FilterBadge
                 key={category}
@@ -167,6 +167,7 @@ interface FilterDropdownProps {
   onToggle: (value: string) => void;
   isAgeRange?: boolean;
   isDateRange?: boolean;
+  isSingleSelect?: boolean;
   ageRange?: { min?: number; max?: number };
   dateRange?: { from?: string; to?: string };
   onAgeRangeChange?: (range: { min?: number; max?: number }) => void;
@@ -181,6 +182,7 @@ function FilterDropdown({
   onToggle,
   isAgeRange,
   isDateRange,
+  isSingleSelect,
   ageRange,
   dateRange,
   onAgeRangeChange,
@@ -259,7 +261,24 @@ function FilterDropdown({
                   type="date"
                   value={dateRange?.from || ''}
                   max={new Date().toISOString().split('T')[0]}
-                  onChange={(e) => onDateRangeChange({ ...dateRange, from: e.target.value })}
+                  onChange={(e) => {
+                    const selectedDate = e.target.value;
+                    const today = new Date().toISOString().split('T')[0];
+                    // Prevent future dates
+                    if (selectedDate && selectedDate > today) {
+                      onDateRangeChange({ ...dateRange, from: today });
+                    } else {
+                      onDateRangeChange({ ...dateRange, from: selectedDate });
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const selectedDate = e.target.value;
+                    const today = new Date().toISOString().split('T')[0];
+                    // Validate on blur as well
+                    if (selectedDate && selectedDate > today) {
+                      onDateRangeChange({ ...dateRange, from: today });
+                    }
+                  }}
                   className="w-full px-3 py-2 border border-primary-300 rounded-lg text-sm"
                 />
               </div>
@@ -270,7 +289,34 @@ function FilterDropdown({
                   value={dateRange?.to || ''}
                   min={dateRange?.from || undefined}
                   max={new Date().toISOString().split('T')[0]}
-                  onChange={(e) => onDateRangeChange({ ...dateRange, to: e.target.value })}
+                  onChange={(e) => {
+                    const selectedDate = e.target.value;
+                    const today = new Date().toISOString().split('T')[0];
+                    const fromDate = dateRange?.from;
+
+                    // Prevent future dates
+                    if (selectedDate && selectedDate > today) {
+                      onDateRangeChange({ ...dateRange, to: today });
+                    }
+                    // Prevent "to" being before "from"
+                    else if (fromDate && selectedDate && selectedDate < fromDate) {
+                      onDateRangeChange({ ...dateRange, to: fromDate });
+                    } else {
+                      onDateRangeChange({ ...dateRange, to: selectedDate });
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const selectedDate = e.target.value;
+                    const today = new Date().toISOString().split('T')[0];
+                    const fromDate = dateRange?.from;
+
+                    // Validate on blur
+                    if (selectedDate && selectedDate > today) {
+                      onDateRangeChange({ ...dateRange, to: today });
+                    } else if (fromDate && selectedDate && selectedDate < fromDate) {
+                      onDateRangeChange({ ...dateRange, to: fromDate });
+                    }
+                  }}
                   className="w-full px-3 py-2 border border-primary-300 rounded-lg text-sm"
                 />
               </div>
@@ -283,7 +329,7 @@ function FilterDropdown({
                   className="flex items-center gap-2 px-3 py-2 hover:bg-primary-50 rounded cursor-pointer"
                 >
                   <input
-                    type="checkbox"
+                    type={isSingleSelect ? "radio" : "checkbox"}
                     checked={selected.includes(option)}
                     onChange={() => onToggle(option)}
                     className="w-4 h-4 text-accent-600 border-primary-300 rounded"

@@ -49,7 +49,7 @@ export interface SalesResponse {
 
 export interface Filters {
   customerRegion: string[];
-  gender: string[];
+  gender: string;
   ageRange: { min: number; max: number };
   productCategory: string[];
   tags: string[];
@@ -75,4 +75,6 @@ export interface Stats {
   totalRevenue: number;
   totalDiscount: number;
   totalSalesRecords: number;
+  recordsWithAmount: number;
+  recordsWithDiscount: number;
 }

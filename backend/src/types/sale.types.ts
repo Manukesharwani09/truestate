@@ -45,7 +45,7 @@ export interface SaleDTO {
 
 export interface SaleFilters {
   customerRegion?: string[];
-  gender?: string[];
+  gender?: string;
   ageRange?: { min?: number; max?: number };
   productCategory?: string[];
   tags?: string[];

@@ -140,23 +140,36 @@ export class SalesService {
       }
     }
 
-    const [stats] = await Promise.all([
-      prisma.sale.aggregate({
-        where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
-        _sum: {
-          quantity: true,
-          finalAmount: true,
-          totalAmount: true,
-        },
-        _count: true,
-      }),
-    ]);
+    // Get aggregate stats
+    const stats = await prisma.sale.aggregate({
+      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
+      _sum: {
+        quantity: true,
+        finalAmount: true,
+        totalAmount: true,
+      },
+      _count: true,
+    });
+
+    // Count records where discount exists using findMany with select
+    const salesWithPrices = await prisma.sale.findMany({
+      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
+      select: {
+        totalAmount: true,
+        finalAmount: true,
+      },
+    });
+
+    const recordsWithDiscount = salesWithPrices.filter(
+      (sale) => sale.totalAmount > sale.finalAmount
+    ).length;
 
     const totalUnitsSold = stats._sum.quantity || 0;
     const totalAmount = stats._sum.totalAmount || 0;
     const totalRevenue = stats._sum.finalAmount || 0;
     const totalDiscount = totalAmount - totalRevenue;
     const totalSalesRecords = stats._count;
+    const recordsWithAmount = stats._count; // All records have totalAmount
 
     return {
       totalUnitsSold,
@@ -164,6 +177,8 @@ export class SalesService {
       totalRevenue,
       totalDiscount,
       totalSalesRecords,
+      recordsWithAmount,
+      recordsWithDiscount,
     };
   }
 
@@ -182,11 +197,11 @@ export class SalesService {
       });
     }
 
-    // Gender (multi-select)
-    if (filters.gender && filters.gender.length > 0) {
+    // Gender (single-select)
+    if (filters.gender) {
       queryFilters.push({
         field: 'gender',
-        operation: FilterOperation.IN,
+        operation: FilterOperation.EQUALS,
         value: filters.gender,
       });
     }
