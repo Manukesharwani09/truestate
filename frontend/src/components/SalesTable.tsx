@@ -57,6 +57,18 @@ export function SalesTable({ sales }: SalesTableProps) {
               <th className="px-4 py-3 text-left text-xs font-medium text-primary-600">
                 Quantity
               </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-primary-600">
+                Total Amount
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-primary-600">
+                Customer region
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-primary-600">
+                Product ID
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-primary-600">
+                Employee name
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-primary-200 bg-white">
@@ -103,6 +115,18 @@ export function SalesTable({ sales }: SalesTableProps) {
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm text-primary-900">
                   {sale.quantity.toString().padStart(2, '0')}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-primary-900">
+                  ₹ {sale.totalAmount.toLocaleString()}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-primary-900">
+                  {sale.customerRegion}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-primary-900">
+                  {sale.productId}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-primary-900">
+                  {sale.employeeName}
                 </td>
               </tr>
             ))}
