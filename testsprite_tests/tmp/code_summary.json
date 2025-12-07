@@ -1,0 +1,338 @@
+{
+  "projectName": "SaleScope - Retail Sales Management System",
+  "version": "1.0.0",
+  "description": "Full-stack sales management system with advanced search, filtering, sorting, and pagination capabilities",
+
+  "techStack": {
+    "frontend": {
+      "framework": "React 18.3.1",
+      "language": "TypeScript 5.7.2",
+      "buildTool": "Vite 6.0.3",
+      "styling": "TailwindCSS 3.4.17",
+      "stateManagement": "Zustand 5.0.2",
+      "dataFetching": "@tanstack/react-query 5.62.8",
+      "httpClient": "Axios 1.7.9",
+      "icons": "lucide-react 0.462.0",
+      "dateUtilities": "date-fns 4.1.0"
+    },
+    "backend": {
+      "runtime": "Node.js",
+      "framework": "Express 4.21.1",
+      "language": "TypeScript 5.7.2",
+      "database": "PostgreSQL (via Prisma ORM 5.22.0)",
+      "validation": "express-validator 7.2.0",
+      "security": "helmet 8.0.0, cors 2.8.5",
+      "dataProcessing": "csv-parse 5.6.0"
+    },
+    "database": {
+      "type": "PostgreSQL",
+      "orm": "Prisma 5.22.0",
+      "migrations": "Prisma Migrate"
+    }
+  },
+
+  "features": {
+    "core": [
+      {
+        "name": "Sales Data Management",
+        "description": "Comprehensive management of retail sales transactions with complete customer and product information",
+        "endpoints": ["/api/sales"],
+        "components": ["Dashboard", "SalesTable"]
+      },
+      {
+        "name": "Advanced Search",
+        "description": "Full-text search across customer name and phone number fields with debouncing",
+        "searchFields": ["customerName", "phoneNumber"],
+        "caseSensitive": false,
+        "debounceTime": "300ms",
+        "components": ["SearchBar"]
+      },
+      {
+        "name": "Multi-Select Filtering",
+        "description": "Multiple independent and combinable filters",
+        "filters": [
+          {
+            "name": "Customer Region",
+            "type": "multi-select",
+            "field": "customerRegion"
+          },
+          {
+            "name": "Gender",
+            "type": "multi-select",
+            "field": "gender"
+          },
+          {
+            "name": "Age Range",
+            "type": "range",
+            "field": "age",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "name": "Product Category",
+            "type": "multi-select",
+            "field": "productCategory"
+          },
+          {
+            "name": "Tags",
+            "type": "multi-select",
+            "field": "tags",
+            "arrayField": true
+          },
+          {
+            "name": "Payment Method",
+            "type": "multi-select",
+            "field": "paymentMethod"
+          },
+          {
+            "name": "Date Range",
+            "type": "date-range",
+            "field": "date"
+          },
+          {
+            "name": "Order Status",
+            "type": "multi-select",
+            "field": "orderStatus"
+          }
+        ],
+        "components": ["FilterBar", "FilterDropdown"]
+      },
+      {
+        "name": "Sorting",
+        "description": "Multi-field sorting with ascending/descending options",
+        "sortableFields": [
+          {
+            "field": "date",
+            "options": ["asc", "desc"],
+            "default": "desc"
+          },
+          {
+            "field": "quantity",
+            "options": ["asc", "desc"]
+          },
+          {
+            "field": "customerName",
+            "options": ["asc", "desc"]
+          }
+        ],
+        "components": ["SortDropdown"]
+      },
+      {
+        "name": "Pagination",
+        "description": "Server-side pagination with configurable page size",
+        "pageSize": 10,
+        "navigation": ["previous", "next", "page numbers"],
+        "statePreservation": true,
+        "components": ["Pagination"]
+      },
+      {
+        "name": "Statistics Dashboard",
+        "description": "Real-time sales statistics and KPIs",
+        "metrics": [
+          "Total Units Sold",
+          "Total Amount",
+          "Total Discount",
+          "Sales Records Count"
+        ],
+        "components": ["StatsCard", "Dashboard"]
+      },
+      {
+        "name": "Phone Number Copy",
+        "description": "One-click copy phone numbers to clipboard",
+        "components": ["SalesTable"]
+      }
+    ]
+  },
+
+  "frontendStructure": {
+    "pages": [
+      {
+        "name": "Dashboard",
+        "path": "/",
+        "components": ["Sidebar", "SearchBar", "SortDropdown", "FilterBar", "StatsCard", "SalesTable", "Pagination"]
+      }
+    ],
+    "components": [
+      "Sidebar - Navigation menu with expandable sections",
+      "SearchBar - Debounced search input",
+      "SortDropdown - Sorting options selector",
+      "FilterBar - Horizontal filter interface with badges",
+      "FilterDropdown - Multi-select filter dropdown",
+      "SalesTable - Data table with 9 columns",
+      "Pagination - Page navigation controls",
+      "StatsCard - Metric display cards"
+    ],
+    "stateManagement": {
+      "store": "useFilterStore (Zustand)",
+      "globalState": [
+        "filters",
+        "searchQuery",
+        "currentPage",
+        "sortBy",
+        "sortDir"
+      ]
+    },
+    "hooks": [
+      "useSalesData - Fetch sales with filters",
+      "useFilterOptions - Fetch available filter options",
+      "useStats - Fetch statistics"
+    ]
+  },
+
+  "backendStructure": {
+    "architecture": "MVC Pattern",
+    "layers": [
+      "Controllers - HTTP request handling",
+      "Services - Business logic",
+      "Utils - Helper functions",
+      "Routes - API routing"
+    ],
+    "endpoints": [
+      {
+        "path": "/api/sales",
+        "method": "POST",
+        "description": "Get sales with search, filter, sort, pagination",
+        "controller": "SalesController.getSales",
+        "requestBody": {
+          "currentPage": "number",
+          "pageSize": "number",
+          "searchPhrase": "string (optional)",
+          "searchOn": "string[] (optional)",
+          "sortBy": "string",
+          "sortDir": "asc | desc",
+          "filters": "SaleFilters object"
+        },
+        "response": {
+          "currentPage": "number",
+          "pageSize": "number",
+          "totalElements": "number",
+          "totalPages": "number",
+          "data": "Sale[]"
+        }
+      },
+      {
+        "path": "/api/sales/filters",
+        "method": "GET",
+        "description": "Get available filter options",
+        "controller": "SalesController.getFilterOptions",
+        "response": {
+          "customerRegions": "string[]",
+          "genders": "string[]",
+          "productCategories": "string[]",
+          "paymentMethods": "string[]",
+          "orderStatuses": "string[]",
+          "tags": "string[]",
+          "ageRange": "{ min: number, max: number }"
+        }
+      },
+      {
+        "path": "/api/sales/stats",
+        "method": "GET",
+        "description": "Get sales statistics",
+        "controller": "SalesController.getStats",
+        "response": {
+          "totalUnitsSold": "number",
+          "totalAmount": "number",
+          "totalRevenue": "number",
+          "totalDiscount": "number",
+          "totalSalesRecords": "number"
+        }
+      }
+    ],
+    "services": [
+      "SalesService - Sales business logic",
+      "QueryBuilderService - Dynamic query construction"
+    ]
+  },
+
+  "databaseSchema": {
+    "tables": [
+      {
+        "name": "Sale",
+        "fields": [
+          "id (String, PK)",
+          "customerId (String)",
+          "customerName (String)",
+          "phoneNumber (String)",
+          "gender (String)",
+          "age (Int)",
+          "customerRegion (String)",
+          "customerType (String)",
+          "productId (String)",
+          "productName (String)",
+          "brand (String)",
+          "productCategory (String)",
+          "tags (String[])",
+          "quantity (Int)",
+          "pricePerUnit (Float)",
+          "discountPercentage (Float)",
+          "totalAmount (Float)",
+          "finalAmount (Float)",
+          "date (DateTime)",
+          "paymentMethod (String)",
+          "orderStatus (String)",
+          "deliveryType (String)",
+          "storeId (String)",
+          "storeLocation (String)",
+          "salespersonId (String)",
+          "employeeName (String)"
+        ],
+        "indexes": [
+          "customerName",
+          "phoneNumber",
+          "date",
+          "customerRegion",
+          "productCategory",
+          "paymentMethod",
+          "orderStatus"
+        ]
+      }
+    ]
+  },
+
+  "deployment": {
+    "frontend": {
+      "port": 5173,
+      "buildCommand": "npm run build",
+      "outputDir": "dist"
+    },
+    "backend": {
+      "port": 5000,
+      "buildCommand": "npm run build",
+      "startCommand": "npm start"
+    }
+  },
+
+  "testingRequirements": {
+    "edgeCases": [
+      "Empty search results",
+      "No filters applied",
+      "All filters applied simultaneously",
+      "Invalid date ranges (from > to)",
+      "Age range boundaries (min = max, min > max)",
+      "Special characters in search",
+      "Very long search queries",
+      "Pagination at boundaries (page 0, last page, beyond last page)",
+      "Sorting with null/undefined values",
+      "Multiple simultaneous filter changes",
+      "Rapid search input (debouncing test)",
+      "Network failures during data fetch",
+      "Malformed API responses",
+      "Large datasets (10000+ records)",
+      "Empty database",
+      "Concurrent user requests",
+      "SQL injection attempts in search",
+      "XSS attempts in filters",
+      "CORS violations",
+      "Rate limiting",
+      "Invalid sort fields",
+      "Invalid filter combinations"
+    ],
+    "performanceTargets": {
+      "searchResponseTime": "< 500ms",
+      "filterResponseTime": "< 300ms",
+      "pageLoadTime": "< 2s",
+      "apiResponseTime": "< 200ms"
+    }
+  }
+}

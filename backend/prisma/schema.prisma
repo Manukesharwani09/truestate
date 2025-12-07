@@ -1,0 +1,61 @@
+// Prisma Schema for Retail Sales Management System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Sale {
+  id                 String   @id @default(uuid())
+
+  // Customer Fields
+  customerId         String   @map("customer_id")
+  customerName       String   @map("customer_name")
+  phoneNumber        String   @map("phone_number")
+  gender             String
+  age                Int
+  customerRegion     String   @map("customer_region")
+  customerType       String   @map("customer_type")
+
+  // Product Fields
+  productId          String   @map("product_id")
+  productName        String   @map("product_name")
+  brand              String
+  productCategory    String   @map("product_category")
+  tags               String[] // Array for multiple tags
+
+  // Sales Fields
+  quantity           Int
+  pricePerUnit       Float    @map("price_per_unit")
+  discountPercentage Float    @map("discount_percentage")
+  totalAmount        Float    @map("total_amount")
+  finalAmount        Float    @map("final_amount")
+
+  // Operational Fields
+  date               DateTime
+  paymentMethod      String   @map("payment_method")
+  orderStatus        String   @map("order_status")
+  deliveryType       String   @map("delivery_type")
+  storeId            String   @map("store_id")
+  storeLocation      String   @map("store_location")
+  salespersonId      String   @map("salesperson_id")
+  employeeName       String   @map("employee_name")
+
+  // Metadata
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@index([customerName, phoneNumber]) // For search
+  @@index([customerRegion])
+  @@index([gender])
+  @@index([age])
+  @@index([productCategory])
+  @@index([paymentMethod])
+  @@index([date])
+  @@index([orderStatus])
+  @@map("sales")
+}
