@@ -154,6 +154,7 @@ export function FilterPanel() {
               <input
                 type="date"
                 value={filters.dateRange?.from || ''}
+                max={new Date().toISOString().split('T')[0]}
                 onChange={(e) =>
                   setFilter('dateRange', {
                     ...filters.dateRange,
@@ -169,6 +170,8 @@ export function FilterPanel() {
               <input
                 type="date"
                 value={filters.dateRange?.to || ''}
+                min={filters.dateRange?.from || undefined}
+                max={new Date().toISOString().split('T')[0]}
                 onChange={(e) =>
                   setFilter('dateRange', {
                     ...filters.dateRange,

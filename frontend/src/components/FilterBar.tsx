@@ -258,6 +258,7 @@ function FilterDropdown({
                 <input
                   type="date"
                   value={dateRange?.from || ''}
+                  max={new Date().toISOString().split('T')[0]}
                   onChange={(e) => onDateRangeChange({ ...dateRange, from: e.target.value })}
                   className="w-full px-3 py-2 border border-primary-300 rounded-lg text-sm"
                 />
@@ -267,6 +268,8 @@ function FilterDropdown({
                 <input
                   type="date"
                   value={dateRange?.to || ''}
+                  min={dateRange?.from || undefined}
+                  max={new Date().toISOString().split('T')[0]}
                   onChange={(e) => onDateRangeChange({ ...dateRange, to: e.target.value })}
                   className="w-full px-3 py-2 border border-primary-300 rounded-lg text-sm"
                 />
