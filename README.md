@@ -9,6 +9,7 @@ SaleScope is a full-stack application designed to handle large-scale sales data 
 ## Tech Stack
 
 ### Backend
+
 - **Runtime**: Node.js 18+
 - **Framework**: Express.js
 - **Language**: TypeScript
@@ -17,6 +18,7 @@ SaleScope is a full-stack application designed to handle large-scale sales data 
 - **Security**: Helmet, CORS
 
 ### Frontend
+
 - **Framework**: React 18
 - **Language**: TypeScript
 - **Build Tool**: Vite
@@ -52,7 +54,7 @@ Server-side pagination with 10 items per page. Zero-indexed page numbers (page 0
 ### 1. Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone <truestate>
 cd SaleScope
 ```
 
@@ -63,8 +65,9 @@ cd backend
 npm install
 
 # Configure environment
-cp .env.example .env
-# Edit .env with your PostgreSQL credentials
+DATABASE_URL=postgres
+
+
 
 # Setup database
 npm run prisma:generate
@@ -88,7 +91,7 @@ cd frontend
 npm install
 
 # Configure environment
-cp .env.example .env
+apiurl
 
 # Start frontend server
 npm run dev
@@ -121,9 +124,11 @@ npm run build
 ## API Documentation
 
 ### POST /api/sales
+
 Get sales data with search, filter, sort, and pagination.
 
 **Request Body:**
+
 ```json
 {
   "currentPage": 0,
@@ -141,9 +146,11 @@ Get sales data with search, filter, sort, and pagination.
 ```
 
 ### GET /api/sales/filters
+
 Get available filter options.
 
 ### GET /api/sales/stats
+
 Get sales statistics (total sales, revenue, average order value).
 
 ## Features
@@ -187,16 +194,10 @@ SaleScope/
 │   │   └── styles/          # Global styles
 │   └── package.json
 │
-├── docs/
-│   └── architecture.md      # System architecture
-│
 └── README.md
 ```
 
-## License
-
-MIT
-
 ## Author
 
+Manu Kesharwani
 Built for TruEstate SDE Intern Assignment
