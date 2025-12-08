@@ -103,24 +103,6 @@ Frontend runs at `http://localhost:5173`
 
 Open browser and navigate to `http://localhost:5173`
 
-## Production Build
-
-### Backend
-
-```bash
-cd backend
-npm run build
-npm start
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm run build
-# Serve the dist/ directory with your preferred web server
-```
-
 ## API Documentation
 
 ### POST /api/sales
